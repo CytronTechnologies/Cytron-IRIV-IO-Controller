@@ -188,12 +188,18 @@ class Modbus(object):
         :type       reg_type:  str
         """
         address = request.register_addr
+        
+        check_addr = address
+        qty = request.quantity
+        while (qty > 0):
+            if check_addr not in self._register_dict[reg_type]:
+                break
+            check_addr += 1
+            qty -= 1
 
-        if address in self._register_dict[reg_type]:
-
+        if qty == 0:
             if self._register_dict[reg_type][address].get('on_get_cb', 0):
-                vals = self._create_response(request=request,
-                                             reg_type=reg_type)
+                vals = self._create_response(request=request, reg_type=reg_type)
                 _cb = self._register_dict[reg_type][address]['on_get_cb']
                 _cb(reg_type=reg_type, address=address, val=vals)
 
@@ -214,8 +220,16 @@ class Modbus(object):
         address = request.register_addr
         val = 0
         valid_register = False
+        
+        check_addr = address
+        qty = request.quantity
+        while (qty > 0):
+            if check_addr not in self._register_dict[reg_type]:
+                break
+            check_addr += 1
+            qty -= 1
 
-        if address in self._register_dict[reg_type]:
+        if qty == 0:
             if request.data is None:
                 request.send_exception(Const.ILLEGAL_DATA_VALUE)
                 return
@@ -231,7 +245,7 @@ class Modbus(object):
                     else:
                         val = [(val == 0xFF)]
                 elif request.function == Const.WRITE_MULTIPLE_COILS:
-                    tmp = int.from_bytes(request.data, "big")
+                    tmp = int.from_bytes(request.data, "little")
                     val = [
                         bool(tmp & (1 << n)) for n in range(request.quantity)
                     ]
