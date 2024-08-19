@@ -1,2 +1,7 @@
+# Baudrate for RS485.
+# Maximum baudrate = 115200.
 MODBUS_RTU_BAUDRATE = 9600
-MODBUS_RTU_SLAVE_ADDRESS = 0x01
+
+# MODBUS RTU Slave ID/Address.
+# Valid Range = 1 to 247.
+MODBUS_RTU_SLAVE_ADDRESS = 1
