@@ -223,6 +223,12 @@ class Modbus(object):
         
         check_addr = address
         qty = request.quantity
+        
+        # For function "Write Single Coil" and "Write Single Register", there is no quantity.
+        # We mannually assign it here.
+        if (qty == None):
+            qty = 1
+        
         while (qty > 0):
             if check_addr not in self._register_dict[reg_type]:
                 break
