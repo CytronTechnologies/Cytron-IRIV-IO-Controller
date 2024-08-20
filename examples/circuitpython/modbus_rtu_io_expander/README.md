@@ -146,7 +146,8 @@ MODBUS_RTU_SLAVE_ADDRESS = 1
   <tr>
     <td align="center" colspan="4"><b>Pulse Counters (Only available on DI1, DI3, DI5, DI7 and DI9)</b><br>
       <i>* Digital Input for the corresponding channel will be disabled if the counter is enabled.<br>
-      * The counter value is 32-bit and it's recommended to read the higher and lower word in one go.</i></td>
+      * The counter value is 32-bit and it's recommended to read the higher and lower word in one go.<br>
+	  * Counter value is reset when the reset bit is set or when the counter is enabled. The value's retained when the counter is disabled.</i></td>
   <tr>
   <tr>
     <td>0x0300 (768)</td>

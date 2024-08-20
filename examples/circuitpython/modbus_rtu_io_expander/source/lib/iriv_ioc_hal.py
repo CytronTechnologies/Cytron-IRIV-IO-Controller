@@ -114,6 +114,7 @@ def an_read_current_ua(channel: int) -> int:
 
 
 # Enable counter.
+# Return False if counter is already enabled before.
 def en_counter(channel: int):
     global count1
     global count3
@@ -124,26 +125,34 @@ def en_counter(channel: int):
     if (channel == 1 and count1 == None):
         din1.deinit()
         count1 = countio.Counter(board.DI1, edge=countio.Edge.FALL)
+        return True
         
     if (channel == 3 and count3 == None):
         din3.deinit()
         count3 = countio.Counter(board.DI3, edge=countio.Edge.FALL)
+        return True
         
     if (channel == 5 and count5 == None):
         din5.deinit()
         count5 = countio.Counter(board.DI5, edge=countio.Edge.FALL)
+        return True
         
     if (channel == 7 and count7 == None):
         din7.deinit()
         count7 = countio.Counter(board.DI7, edge=countio.Edge.FALL)
+        return True
         
     if (channel == 9 and count9 == None):
         din9.deinit()
         count9 = countio.Counter(board.DI9, edge=countio.Edge.FALL)
+        return True
+    
+    return False
 
 
 
 # Disable counter.
+# Return False if counter is already disabled before.
 def dis_counter(channel: int):
     global count1
     global count3
@@ -165,28 +174,35 @@ def dis_counter(channel: int):
         count1 = None
         din1 = digitalio.DigitalInOut(board.DI1)
         din1.direction = digitalio.Direction.INPUT
+        return True
         
     if (channel == 3 and count3 != None):
         count3.deinit()
         count3 = None
         din3 = digitalio.DigitalInOut(board.DI3)
         din3.direction = digitalio.Direction.INPUT
+        return True
         
     if (channel == 5 and count5 != None):
         count5.deinit()
         count5 = None
         din5 = digitalio.DigitalInOut(board.DI5)
         din5.direction = digitalio.Direction.INPUT
+        return True
         
     if (channel == 7 and count7 != None):
         count7.deinit()
         count7 = None
         din7 = digitalio.DigitalInOut(board.DI7)
         din7.direction = digitalio.Direction.INPUT
+        return True
         
     if (channel == 9 and count9 != None):
         count9.deinit()
         count9 = None
         din9 = digitalio.DigitalInOut(board.DI9)
         din9.direction = digitalio.Direction.INPUT
+        return True
+    
+    return False
         

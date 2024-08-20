@@ -25,8 +25,8 @@ MODEL2 = 0x4300  # "C"
 
 # Version
 VERSION_MAJOR = 1
-VERSION_MINOR = 0
-VERSION_PATCH = 1
+VERSION_MINOR = 1
+VERSION_PATCH = 0
 
 
 
@@ -154,40 +154,40 @@ def an_get_cb(reg_type, address, val):
 # Call back when setting the Counter Enable Bit.
 def counter_en_set_cb(reg_type, address, val):
     # Enable the counter function if the enable bit is set.
-    # Otherwise, disable the counter function and clear the counter value register.
+    # Clear the counter value if it's just enabled.
     if (client.get_coil(COUNT1_EN_ADD) == 1):
-        Hal.en_counter(1)
+        if (Hal.en_counter(1) == True):
+            client.set_ireg(COUNT1_H_ADD, [0, 0])
     else:
         Hal.dis_counter(1)
-        client.set_ireg(COUNT1_H_ADD, [0, 0])
         
         
     if (client.get_coil(COUNT3_EN_ADD) == 1):
-        Hal.en_counter(3)
+        if (Hal.en_counter(3) == True):
+            client.set_ireg(COUNT3_H_ADD, [0, 0])
     else:
         Hal.dis_counter(3)
-        client.set_ireg(COUNT3_H_ADD, [0, 0])
         
         
     if (client.get_coil(COUNT5_EN_ADD) == 1):
-        Hal.en_counter(5)
+        if (Hal.en_counter(5) == True):
+            client.set_ireg(COUNT5_H_ADD, [0, 0])
     else:
         Hal.dis_counter(5)
-        client.set_ireg(COUNT5_H_ADD, [0, 0])
         
         
     if (client.get_coil(COUNT7_EN_ADD) == 1):
-        Hal.en_counter(7)
+        if (Hal.en_counter(7) == True):
+            client.set_ireg(COUNT7_H_ADD, [0, 0])
     else:
         Hal.dis_counter(7)
-        client.set_ireg(COUNT7_H_ADD, [0, 0])
         
         
     if (client.get_coil(COUNT9_EN_ADD) == 1):
-        Hal.en_counter(9)
+        if (Hal.en_counter(9) == True):
+            client.set_ireg(COUNT9_H_ADD, [0, 0])
     else:
         Hal.dis_counter(9)
-        client.set_ireg(COUNT9_H_ADD, [0, 0])
             
             
             
