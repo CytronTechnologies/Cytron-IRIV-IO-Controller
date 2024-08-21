@@ -1,3 +1,17 @@
+# SPDX-FileCopyrightText: 2024 Wai Weng for Cytron Technologies
+#
+# SPDX-License-Identifier: MIT
+
+"""
+DESCRIPTION:
+Main program for the MODBUS RTU IO Expander.
+
+AUTHOR  : Wai Weng
+COMPANY : Cytron Technologies Sdn Bhd
+WEBSITE : www.cytron.io
+EMAIL   : support@cytron.io
+"""
+
 import board
 import time
 import iriv_ioc_modbus
