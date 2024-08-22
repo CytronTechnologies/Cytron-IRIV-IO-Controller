@@ -204,7 +204,7 @@ class Modbus(object):
                 _cb(reg_type=reg_type, address=address, val=vals)
 
             vals = self._create_response(request=request, reg_type=reg_type)
-            request.send_response(vals)
+            request.send_response(vals, signed=False)
         else:
             request.send_exception(Const.ILLEGAL_DATA_ADDRESS)
 
