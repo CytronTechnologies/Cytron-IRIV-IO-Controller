@@ -139,6 +139,9 @@ class Serial(CommonModbusFunctions):
             self._inter_frame_delay = 3500 * self._t1char / 1000
         else:
             self._inter_frame_delay = 1750
+        
+        # The resolution for inter-frame delay is 1ms. So increase it to avoid problem and high baudrate.
+        self._inter_frame_delay += 1500
 
     def _calculate_crc16(self, data: bytearray) -> bytes:
         """
