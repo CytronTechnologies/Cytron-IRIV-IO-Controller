@@ -262,3 +262,43 @@ MODBUS_RTU_SLAVE_ADDRESS = 1
   </tr>
 </table>
 
+## Hiding CIRCUITPY drive and REPL from the user.
+If you wish to hide the CIRCUITPY drive and also the REPL console from the user when the IRIV-IOC is connected to the computer via its USB-C port, we can create a `boot.py` file in the CIRCUITPY root directory with the following contents:
+```
+# Hide the CIRCUITPY drive by default.
+# Enable it if the user button is pressed while booting/resetting.
+
+import storage
+import usb_cdc
+import board
+import digitalio
+import pwmio
+import time
+
+
+button = digitalio.DigitalInOut(board.BUTTON)
+button.direction = digitalio.Direction.INPUT
+
+buzzer = pwmio.PWMOut(board.BUZZER, frequency=1000, duty_cycle=0, variable_frequency=False)
+
+# Disable devices only if button is not pressed.
+if (button.value == 1):
+    storage.disable_usb_drive()
+    usb_cdc.disable()
+    
+else:
+    buzzer.duty_cycle = 32768
+    time.sleep(0.07)
+    buzzer.duty_cycle = 0
+
+    time.sleep(0.07)
+
+    buzzer.duty_cycle = 32768
+    time.sleep(0.15)
+    buzzer.duty_cycle = 0
+    
+buzzer.deinit()
+button.deinit()
+```
+After that, reset the IRIV-IOC and the CIRCUITPY drive will not show up anymore. If you wish to modify the `settings.toml` file, hold the **user button** while resetting the IRIV-IOC until a beep sound is heard. Then the CIRCUITPY drive is temporarily accessible.
+For more information on how this works, please refer to the [Adafruit Tutorial](https://learn.adafruit.com/customizing-usb-devices-in-circuitpython/circuitpy-midi-serial).
