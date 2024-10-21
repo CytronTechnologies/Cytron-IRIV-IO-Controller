@@ -13,9 +13,14 @@ EMAIL   : support@cytron.io
 """
 
 import os
+import time
 import board
+import microcontroller
 import iriv_ioc_hal as Hal
+from adafruit_wiznet5k.adafruit_wiznet5k import WIZNET5K
+import adafruit_wiznet5k.adafruit_wiznet5k_socketpool as socketpool
 from umodbus.serial import ModbusRTU
+from umodbus.tcp import ModbusTCP
 
 
 
@@ -24,9 +29,9 @@ MODEL1 = 0x494F  # "IO"
 MODEL2 = 0x4300  # "C"
 
 # Version
-VERSION_MAJOR = 1
-VERSION_MINOR = 1
-VERSION_PATCH = 2
+VERSION_MAJOR = 2
+VERSION_MINOR = 0
+VERSION_PATCH = 0
 
 
 
@@ -92,17 +97,68 @@ VERSION_PATCH_ADD = 0x0F12  # Patch Version (Read Only)
 
 
 # MODBUS RTU Client/Slave setup
-client = ModbusRTU(
-    addr = os.getenv("MODBUS_RTU_SLAVE_ADDRESS"),
-    tx_pin = board.TX,
-    rx_pin = board.RX,
-    baudrate = os.getenv("MODBUS_RTU_BAUDRATE")
-)
+modbus_mode = os.getenv("MODBUS_MODE")
+if (modbus_mode == "RTU"):
+    client = ModbusRTU(
+        addr = os.getenv("MODBUS_RTU_SLAVE_ADDRESS"),
+        tx_pin = board.TX,
+        rx_pin = board.RX,
+        baudrate = os.getenv("MODBUS_RTU_BAUDRATE")
+    )
 
+# MODBUS TCP Client/Slave setup
+else:
+    # Construct the MAC address from dummy OUI (first 3 bytes) and board UID (last 3 bytes).
+    mac_address = bytearray([0xDE,0xAD,0xBE]) + microcontroller.cpu.uid[-3:]
+    
+    # Construct the hostname with last 3 bytes of board UID.
+    hostname = "IRIV-IOC_" + microcontroller.cpu.uid[-3:].hex().upper()
+    
+    # Getting IP address from DHCP?
+    is_dhcp = bool(os.getenv("DHCP"))
+    
+    # Turn on USR LED while waiting for the ethernet link to be established.
+    Hal.led.value = 1
+    
+    # Initialize ethernet interface.
+    while True:
+        try:
+            eth = WIZNET5K(Hal.w5500_spi, Hal.w5500_cs, Hal.w5500_rst, is_dhcp=is_dhcp, mac=mac_address, hostname=hostname)
+        except Exception:
+            # Cannot connect to network. Try again after 1 second.
+            time.sleep(1)
+            continue
+        break
+    
+    # Wait until link is up.
+    while not eth.link_status:
+        continue
+    
+    # Configure the IP Address, Subnet Mask, Gateway and DNS manually if not using DHCP.
+    if not is_dhcp:
+        # Get the settings for MODBUS TCP.
+        ip_address = eth.unpretty_ip(os.getenv("IP_ADDRESS"))
+        subnet_mask = eth.unpretty_ip(os.getenv("SUBNET_MASK"))
+        gateway_address = eth.unpretty_ip(os.getenv("GATEWAY_ADDRESS"))
+        dns_server = eth.unpretty_ip(os.getenv("DNS_SERVER"))
+        
+        eth.ifconfig = (ip_address, subnet_mask, gateway_address, dns_server)
+    
+    # Open sockets for listening.
+    sockpool = socketpool.SocketPool(eth)
+    server_port = 502
+    
+    client = ModbusTCP(sockpool, addr_list = [0xff])
+    client.bind(local_port=502, max_connections=7)
+    
+    print("MAC Address:", eth.pretty_mac(eth.mac_address))
+    print("IP Address:", eth.pretty_ip(eth.ip_address))
+    
 
 
 # Call back when reading DIN.
 def din_get_cb(reg_type, address, val):
+    
     # For DIN without counter function, set the register value based on DIN value.
     client.set_ist(DI0_ADD,  Hal.din0.value)
     client.set_ist(DI2_ADD,  Hal.din2.value)

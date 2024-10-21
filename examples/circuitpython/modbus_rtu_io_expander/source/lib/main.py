@@ -14,10 +14,15 @@ EMAIL   : support@cytron.io
 
 import board
 import time
+from microcontroller import watchdog
+from watchdog import WatchDogMode
 import iriv_ioc_modbus
 import iriv_ioc_hal as Hal
 
 
+# Setup watchdog timer.
+watchdog.timeout = 5
+watchdog.mode = WatchDogMode.RESET
 
 timestamp = time.monotonic()
 
@@ -34,3 +39,6 @@ while True:
     if (time.monotonic() - timestamp >= 0.5):
         timestamp = time.monotonic()
         Hal.led.value ^= 1
+        
+    # Feeding Watchdog Timer.
+    watchdog.feed()

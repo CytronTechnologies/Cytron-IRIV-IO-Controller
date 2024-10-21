@@ -16,6 +16,7 @@ EMAIL   : support@cytron.io
 import board
 import digitalio
 import analogio
+import busio
 import countio
 
 
@@ -73,6 +74,13 @@ din7.direction = digitalio.Direction.INPUT
 din8.direction = digitalio.Direction.INPUT
 din9.direction = digitalio.Direction.INPUT
 din10.direction = digitalio.Direction.INPUT
+
+
+
+# SPI for W5500.
+w5500_cs = digitalio.DigitalInOut(board.W5500_CS)
+w5500_rst = digitalio.DigitalInOut(board.W5500_RST)
+w5500_spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
 
 
 
