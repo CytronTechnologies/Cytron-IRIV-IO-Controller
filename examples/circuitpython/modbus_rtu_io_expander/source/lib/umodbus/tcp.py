@@ -360,9 +360,9 @@ class TCPServer(object):
         
         
         
-        # If link is down for >= 3 seconds, reset the socket.
+        # If link is down for >= 5 seconds, reset the socket.
         if not self._sockpool._interface.link_status:
-            if time.monotonic() - self._link_timestamp >= 3:
+            if time.monotonic() - self._link_timestamp >= 5:
                 if not self._current_sock._socket_closed:
                     self._current_sock.close()
             return None
@@ -380,15 +380,18 @@ class TCPServer(object):
             is_connected = False
             is_closed = True
             
-        if not is_connected and is_closed:
-            # Previous client is disconnected and socket is closed.
-            # Create a new socket, bind it and start listening.
-            self._current_sock = self._sockpool.socket()
-            self._current_sock.bind((self._local_ip, self._local_port))
-            self._current_sock.listen()
+        if not is_connected:
+            if is_closed:
+                # Previous client is disconnected and socket is closed.
+                # Create a new socket, bind it and start listening.
+                self._current_sock = self._sockpool.socket()
+                self._current_sock.bind((self._local_ip, self._local_port))
+                self._current_sock.listen()
+                
+                # Replace the old one in socket list.
+                self._socklist[current_socknum] = self._current_sock
             
-            # Replace the old one in socket list.
-            self._socklist[current_socknum] = self._current_sock
+            return None
         
         
         # Read the received data.

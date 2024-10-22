@@ -1,5 +1,5 @@
 # MODBUS Mode ("RTU" or "TCP").
-MODBUS_MODE = "TCP"
+MODBUS_MODE = "RTU"
 
 
 
@@ -23,10 +23,10 @@ These configurations are only for MODBUS TCP.
 
 # Get IP from DHCP Server (1=Yes or 0=No)?
 # If NO, we need to set the IP Address, Subnet Mask, Gateway Address and DNS Address manually.
-DHCP = 0
+DHCP = 1
 
 # IP Adress (Ignored if DHCP = True)
-IP_ADDRESS = "10.0.0.1"
+IP_ADDRESS = "10.0.0.2"
 
 # Subnet Mask (Ignored if DHCP = True)
 SUBNET_MASK = "255.255.255.0"
