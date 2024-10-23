@@ -1,23 +1,31 @@
-# MODBUS RTU (RS485) IO Expander Example Code
+# MODBUS RTU/TCP IO Expander Example Code
 This is the example code for using the IRIV IO Controller (IRIV-IOC) as a IO Expander Module. The code is written in CircuitPython and support the following features:
-- MODBUS RTU (RS485) Compatible
+- MODBUS RTU (RS485) and MODBUS TCP (Ethernet) Compatible<br>It's configured as RTU mode by default and can be changed in the `settings.toml` file
 - 11x Digital Inputs (5 of them can be configured as counter)
 - 4x Digital Outpus
 - 2x Analog Inputs (0-10V or 0-40mA)
 
-The `source` folder contains the python source code in .py format. While the `bin` folder contains the pre-compiled .mpy files.<br>
-Use the .mpy files if you don't want to expose the source code to the end user or you don't want the user to mess around with your code.
-
 ## Setting Up
 1. Load the IRIV-IOC with the latest CircuitPython Firmware. It can be downloade from [here](https://circuitpython.org/board/cytron_iriv_io_controller/).
 2. Connect the IRIV-IOC to the computer via USB-C. A USB drive called `CIRCUITPY` should be showing up.
-3. Copy all files in either the `source` or `bin` folder to the CIRCUITPY drive.
-4. Reboot the IRIV-IOC. The blue USR LED should be blinking if the code is running correctly.
+3. Copy all files in **either the `source` or `bin` folder** to the CIRCUITPY drive. Do not copy both.
+4. Reboot the IRIV-IOC. The blue USR LED should be blinking if the code is running correctly (For MODBUS TCP, USR LED turns on when the code is running, it only blinks when the ethernet link is up).
+
+*The `source` folder contains the python source code in .py format. While the `bin` folder contains the pre-compiled .mpy files.<br>
+Use the .mpy files if you don't want to expose the source code to the end user or you don't want the user to mess around with your code.*
 
 ## MODBUS RTU Configuration
 1. Connect the IRIV-IOC to the computer via USB-C. A CIRCUITPY drive should be detected.
-2. Edit the `settings.toml` file in the CIRCUITPY drive. You can change the RS485 Baudrate and MODBUS RTU slave ID here.<br>
+2. Edit the `settings.toml` file in the CIRCUITPY drive and make sure `MODBUS_MODE = "RTU"`.<br>
+We can also change the RS485 Baudrate and MODBUS RTU slave ID.<br>
 ```
+# MODBUS Mode ("RTU" or "TCP").
+MODBUS_MODE = "RTU"
+
+"""
+These configurations are only for MODBUS RTU.
+"""
+
 # Baudrate for RS485.
 # Maximum baudrate = 115200.
 MODBUS_RTU_BAUDRATE = 9600
@@ -26,9 +34,42 @@ MODBUS_RTU_BAUDRATE = 9600
 # Valid Range = 1 to 247.
 MODBUS_RTU_SLAVE_ADDRESS = 1
 ```
+3. Save the file and **reboot**.
+
+## MODBUS TCP Configuration
+1. Connect the IRIV-IOC to the computer via USB-C. A CIRCUITPY drive should be detected.
+2. Edit the `settings.toml` file in the CIRCUITPY drive and make sure `MODBUS_MODE = "TCP"`.<br>
+```
+# MODBUS Mode ("RTU" or "TCP").
+MODBUS_MODE = "TCP"
+```
+3. Scroll down to the MODBUS TCP section, we can change the settings and assign static IP for the IRIV-IOC too.<br>
+```
+"""
+These configurations are only for MODBUS TCP.
+"""
+
+# Get IP from DHCP Server (1=Yes or 0=No)?
+# If NO, we need to set the IP Address, Subnet Mask, Gateway Address and DNS Address manually.
+DHCP = 1
+
+# IP Adress (Ignored if DHCP = True)
+IP_ADDRESS = "10.0.0.2"
+
+# Subnet Mask (Ignored if DHCP = True)
+SUBNET_MASK = "255.255.255.0"
+
+# Gateway Address (Ignored if DHCP = True)
+GATEWAY_ADDRESS = "0.0.0.0"
+
+# DNS Server Address (Ignored if DHCP = True)
+DNS_SERVER = "8.8.8.8"
+```
 4. Save the file and **reboot**.
 
-## MODBUS RTU Prototcol
+***Note:*** *The MODBUS TCP slave ID is fixed as `0xFF (255)`. Use the IP address instead to communicate with different MODBUS TCP slave.*
+
+## MODBUS Prototcol
 ### Function Code
 | Function Code<br>HEX (DEC) | Description              |
 | -------------------------- | ------------------------ |
