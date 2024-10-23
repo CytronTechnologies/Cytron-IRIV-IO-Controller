@@ -69,6 +69,8 @@ DNS_SERVER = "8.8.8.8"
 
 ***Note:*** *The MODBUS TCP slave ID is fixed as `0xFF (255)`. Use the IP address instead to communicate with different MODBUS TCP slave.*
 
+***Disclaimer:*** *Due to the limitation of circuitpython, the typical response time for MODBUS TCP is around 20ms.*
+
 ## MODBUS Prototcol
 ### Function Code
 | Function Code<br>HEX (DEC) | Description              |
