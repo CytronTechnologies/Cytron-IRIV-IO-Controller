@@ -6,7 +6,7 @@ This is the example code for using the IRIV IO Controller (IRIV-IOC) as a IO Exp
 - 2x Analog Inputs (0-10V or 0-40mA)
 
 ## Setting Up
-1. Load the IRIV-IOC with the latest CircuitPython Firmware. It can be downloade from [here](https://circuitpython.org/board/cytron_iriv_io_controller/).
+1. Load the IRIV-IOC with the CircuitPython Firmware v9.2.8 (We tested it on this version). It can be downloade from [here](https://adafruit-circuit-python.s3.amazonaws.com/bin/cytron_iriv_io_controller/en_US/adafruit-circuitpython-cytron_iriv_io_controller-en_US-9.2.8.uf2).
 2. Connect the IRIV-IOC to the computer via USB-C. A USB drive called `CIRCUITPY` should be showing up.
 3. Copy all files in **either the `source` or `bin` folder** to the CIRCUITPY drive. Do not copy both.
 4. Reboot the IRIV-IOC. The blue USR LED should be blinking if the code is running correctly (For MODBUS TCP, USR LED turns on when the code is running, it only blinks when the ethernet link is up).
